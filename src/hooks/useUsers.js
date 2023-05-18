@@ -1,7 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchUsers } from '../services/users'
+import { useEffect, useRef, useState } from 'react'
+
 
 export function useUsers () {
+  const originalUsers = useRef([])
+  const [users, setUsers] = useState([])
   const { isLoading: loading, isError: error, data, refetch, fetchNextPage, hasNextPage } = useInfiniteQuery(
     ['users'],
     fetchUsers,
@@ -11,12 +15,21 @@ export function useUsers () {
       staleTime: Infinity
     }
   )
+
+  useEffect(() => {
+    setUsers(data?.pages?.flatMap(page => page.users) ?? [])
+    originalUsers.current = data?.pages?.flatMap(page => page.users)
+  }, [data])
+  
   return {
     loading,
     error,
-    users: data?.pages?.flatMap(page => page.users) ?? [],
+    users,
     refetch,
     fetchNextPage,
-    hasNextPage
+    hasNextPage,
+    setUsers,
+    originalUsers
+    
   }
 }

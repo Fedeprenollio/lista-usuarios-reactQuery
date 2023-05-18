@@ -14,7 +14,7 @@ export const SortBy = {
 }
 
 function App () {
-  const { loading, error, users, refetch, fetchNextPage, hasNextPage } = useUsers()
+  const { loading, error, users, refetch, fetchNextPage, hasNextPage,setUsers,originalUsers} = useUsers()
 
   // ESTO LO EVITO AL USAR REAC QUERIES
   // const [error, setError] = useState(false)
@@ -61,11 +61,12 @@ function App () {
   }
 
   const handleDeleteUser = (uuid) => {
-    // const newList = users.filter(user => user.login.uuid !== uuid)
-    // setUsers(newList)
+    
+    const newList = users.filter(user => user.login.uuid !== uuid)
+    setUsers(newList)
   }
   const handleReset = async () => {
-    // setUsers(originalUsers.current)
+    setUsers(originalUsers.current)
     await refetch()
   }
 
@@ -140,7 +141,7 @@ function App () {
       </header>
       <main>
         {users?.length > 0 &&
-          <UsersList changeSorting={handleChangeSort} handleDeleteUser={handleDeleteUser} showColors={showColors} users={sortedUsers} />}
+          <UsersList changeSorting={handleChangeSort} handleDeleteUser={handleDeleteUser} showColors={showColors} users={sortedUsers}  />}
         {loading && <p>Cargando...</p>}
         {error && <p>Error en la carga.  </p>}
         {!loading && !error && users.length === 0 && <p> No hay usuarios por mostrar</p>}
